@@ -119,6 +119,7 @@ struct PbrInput {
     anisotropy_B: vec3<f32>,
     is_orthographic: bool,
     flags: u32,
+    lighting_channel_mask: u32,
 };
 
 // Creates a PbrInput with default values
@@ -146,6 +147,7 @@ fn pbr_input_new() -> PbrInput {
     pbr_input.lightmap_light = vec3<f32>(0.0);
 
     pbr_input.flags = 0u;
+    pbr_input.lighting_channel_mask = 0xFFFFFFFFu;
 
     return pbr_input;
 }

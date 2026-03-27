@@ -407,6 +407,11 @@ fn apply_pbr_lighting(
             i = i + 1u) {
         let light_id = clustering::get_clusterable_object_id(i);
 
+        // Lighting channel filtering: skip light if no channel overlap with mesh
+        if ((in.lighting_channel_mask & view_bindings::clusterable_objects.data[light_id].lighting_channel_mask) == 0u) {
+            continue;
+        }
+
         // If we're lightmapped, disable diffuse contribution from the light if
         // requested, to avoid double-counting light.
 #ifdef LIGHTMAP
@@ -453,6 +458,11 @@ fn apply_pbr_lighting(
             i < clusterable_object_index_ranges.first_reflection_probe_index_offset;
             i = i + 1u) {
         let light_id = clustering::get_clusterable_object_id(i);
+
+        // Lighting channel filtering: skip light if no channel overlap with mesh
+        if ((in.lighting_channel_mask & view_bindings::clusterable_objects.data[light_id].lighting_channel_mask) == 0u) {
+            continue;
+        }
 
         // If we're lightmapped, disable diffuse contribution from the light if
         // requested, to avoid double-counting light.
@@ -512,6 +522,11 @@ fn apply_pbr_lighting(
         // check if this light should be skipped, which occurs if this light does not intersect with the view
         // note point and spot lights aren't skippable, as the relevant lights are filtered in `assign_lights_to_clusters`
         let light = &view_bindings::lights.directional_lights[i];
+
+        // Lighting channel filtering: skip light if no channel overlap with mesh
+        if ((in.lighting_channel_mask & (*light).lighting_channel_mask) == 0u) {
+            continue;
+        }
 
         // If we're lightmapped, disable diffuse contribution from the light if
         // requested, to avoid double-counting light.

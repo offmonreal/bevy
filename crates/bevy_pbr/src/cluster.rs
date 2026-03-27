@@ -66,7 +66,7 @@ pub struct GpuClusterableObject {
     pub(crate) soft_shadow_size: f32,
     pub(crate) shadow_map_near_z: f32,
     pub(crate) decal_index: u32,
-    pub(crate) pad: f32,
+    pub(crate) lighting_channel_mask: u32,
 }
 
 #[derive(Resource)]

@@ -10,6 +10,7 @@
     prepass_utils,
     lighting,
     mesh_bindings::mesh,
+    mesh_functions,
     mesh_view_bindings::view,
     parallax_mapping::parallaxed_uv,
     lightmap::lightmap,
@@ -42,8 +43,11 @@ fn pbr_input_from_vertex_output(
 
 #ifdef MESHLET_MESH_MATERIAL_PASS
     pbr_input.flags = in.mesh_flags;
+    pbr_input.lighting_channel_mask = 0xFFFFFFFFu;
 #else
     pbr_input.flags = mesh[in.instance_index].flags;
+    let tag = mesh_functions::get_tag(in.instance_index);
+    pbr_input.lighting_channel_mask = select(tag, 0xFFFFFFFFu, tag == 0u);
 #endif
 
     pbr_input.is_orthographic = view.clip_from_view[3].w == 1.0;
