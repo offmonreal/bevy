@@ -43,7 +43,8 @@ fn pbr_input_from_vertex_output(
 
 #ifdef MESHLET_MESH_MATERIAL_PASS
     pbr_input.flags = in.mesh_flags;
-    pbr_input.lighting_channel_mask = 0xFFFFFFFFu;
+    let meshlet_tag = in.mesh_tag;
+    pbr_input.lighting_channel_mask = select(meshlet_tag, 0xFFFFFFFFu, meshlet_tag == 0u);
 #else
     pbr_input.flags = mesh[in.instance_index].flags;
     let tag = mesh_functions::get_tag(in.instance_index);

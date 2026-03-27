@@ -6,6 +6,7 @@ use crate::{
 };
 use bevy_asset::{AssetEvent, AssetServer, Assets, UntypedAssetId};
 use bevy_camera::visibility::RenderLayers;
+use bevy_mesh::MeshTag;
 use bevy_ecs::{
     entity::{Entities, Entity, EntityHashMap},
     message::MessageReader,
@@ -97,6 +98,7 @@ impl InstanceManager {
         render_material_bindings: &RenderMaterialBindings,
         not_shadow_receiver: bool,
         not_shadow_caster: bool,
+        tag: Option<u32>,
     ) {
         // Build a MeshUniform for the instance
         let transform = transform.affine();
@@ -132,7 +134,7 @@ impl InstanceManager {
             mesh_material_binding_id.slot,
             None,
             None,
-            None,
+            tag,
         );
 
         // Append instance data
@@ -204,6 +206,7 @@ pub fn extract_meshlet_mesh_entities(
                     Option<&RenderLayers>,
                     Has<NotShadowReceiver>,
                     Has<NotShadowCaster>,
+                    Option<&MeshTag>,
                 )>,
                 Res<AssetServer>,
                 ResMut<Assets<MeshletMesh>>,
@@ -241,6 +244,7 @@ pub fn extract_meshlet_mesh_entities(
         render_layers,
         not_shadow_receiver,
         not_shadow_caster,
+        mesh_tag,
     ) in &instances_query
     {
         // Skip instances with an unloaded MeshletMesh asset
@@ -268,6 +272,7 @@ pub fn extract_meshlet_mesh_entities(
             &render_material_bindings,
             not_shadow_receiver,
             not_shadow_caster,
+            mesh_tag.map(|t| t.0),
         );
     }
 }
