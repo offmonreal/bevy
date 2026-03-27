@@ -78,6 +78,23 @@ impl Default for LightingChannelMask {
     }
 }
 
+impl LightingChannelMask {
+    /// Convert bitmask to RenderLayers for shadow view visibility.
+    pub fn to_render_layers(self) -> RenderLayers {
+        let mut layers = Vec::new();
+        for i in 0..32 {
+            if self.0 & (1 << i) != 0 {
+                layers.push(i as usize);
+            }
+        }
+        if layers.is_empty() {
+            RenderLayers::default()
+        } else {
+            RenderLayers::from_layers(&layers)
+        }
+    }
+}
+
 #[derive(Component)]
 pub struct ExtractedPointLight {
     pub color: LinearRgba,
@@ -1376,6 +1393,7 @@ pub fn prepare_lights(
                         light_entity,
                         face_index,
                     },
+                    LightingChannelMask(light.lighting_channel_mask).to_render_layers(),
                 ));
 
                 if !matches!(gpu_preprocessing_mode, GpuPreprocessingMode::Culling) {
@@ -1476,6 +1494,7 @@ pub fn prepare_lights(
                 },
                 *spot_light_frustum.unwrap(),
                 LightEntity::Spot { light_entity },
+                LightingChannelMask(light.lighting_channel_mask).to_render_layers(),
             ));
 
             if !matches!(gpu_preprocessing_mode, GpuPreprocessingMode::Culling) {
@@ -1628,6 +1647,7 @@ pub fn prepare_lights(
                         light_entity,
                         cascade_index,
                     },
+                    LightingChannelMask(light.lighting_channel_mask).to_render_layers(),
                 ));
 
                 if !matches!(gpu_preprocessing_mode, GpuPreprocessingMode::Culling) {
